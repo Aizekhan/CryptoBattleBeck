@@ -1,8 +1,9 @@
-// backend/auth.js
 const passport = require('passport');
 const TelegramStrategy = require('passport-telegram-official').Strategy;
 const User = require('./models/User');
 const jwt = require('jsonwebtoken');
+const express = require('express');
+const app = express();
 
 passport.use(new TelegramStrategy({
     botToken: process.env.TELEGRAM_BOT_TOKEN,
@@ -24,3 +25,8 @@ passport.use(new TelegramStrategy({
 app.use(passport.initialize());
 
 app.get('/auth/telegram/callback', passport.authenticate('telegram', { session: false }));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
