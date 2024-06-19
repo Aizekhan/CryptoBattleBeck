@@ -1,23 +1,26 @@
-const TelegramStrategy = require('passport-telegram-official').Strategy;
+// backend/auth.js
 const passport = require('passport');
+const TelegramStrategy = require('passport-telegram-official').Strategy;
 const User = require('./models/User');
-const config = require('./config');
+const jwt = require('jsonwebtoken');
 
 passport.use(new TelegramStrategy({
     botToken: process.env.TELEGRAM_BOT_TOKEN,
-}, async (profile, done) => {
-    try {
-        let user = await User.findOne({ telegramId: profile.id });
-        if (!user) {
-            user = new User({
-                telegramId: profile.id,
-                username: profile.username,
-                displayName: profile.displayName,
-            });
-            await user.save();
-        }
-        return done(null, user);
-    } catch (err) {
-        return done(err, false);
+    passReqToCallback: true
+}, async (req, profile, done) => {
+    let user = await User.findOne({ telegramId: profile.id });
+    if (!user) {
+        user = new User({
+            telegramId: profile.id,
+            username: profile.username,
+            displayName: profile.displayName
+        });
+        await user.save();
     }
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    req.res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
 }));
+
+app.use(passport.initialize());
+
+app.get('/auth/telegram/callback', passport.authenticate('telegram', { session: false }));
