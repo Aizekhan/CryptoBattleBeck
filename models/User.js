@@ -13,6 +13,18 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     displayName: String,
+    referralCode: {
+        type: String,
+        unique: true
+    },
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    referrals: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
     // Інші поля...
 });
 
