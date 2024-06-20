@@ -1,5 +1,3 @@
-// backend/models/User.js
-
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -24,8 +22,35 @@ const userSchema = new mongoose.Schema({
     referrals: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    }],
+    level: { 
+        type: Number, 
+        default: 1 
+    },
+    tapIncome: { 
+        type: Number, 
+        default: 10 
+    },
+    hourlyIncome: { 
+        type: Number, 
+        default: 100 
+    },
+    balance: { 
+        type: Number, 
+        default: 0 
+    },
+    heroes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hero'
+    }],
+    currentHero: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hero'
+    },
+    mines: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Mine'
     }]
-    // Інші поля...
 });
 
 const User = mongoose.model('User', userSchema);

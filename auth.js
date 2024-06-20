@@ -1,32 +1,79 @@
-const passport = require('passport');
-const TelegramStrategy = require('passport-telegram-official').Strategy;
-const User = require('./models/User');
-const jwt = require('jsonwebtoken');
 const express = require('express');
-const app = express();
+const router = express.Router();
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
-passport.use(new TelegramStrategy({
-    botToken: process.env.TELEGRAM_BOT_TOKEN,
-    passReqToCallback: true
-}, async (req, profile, done) => {
-    let user = await User.findOne({ telegramId: profile.id });
-    if (!user) {
-        user = new User({
-            telegramId: profile.id,
-            username: profile.username,
-            displayName: profile.displayName
-        });
+const generateToken = (id) => {
+    return jwt.sign({ id }, config.jwtSecret, {
+        expiresIn: '30d',
+    });
+};
+
+// Обробка аутентифікації через Telegram
+router.post('/telegram', async (req, res) => {
+    const { telegramId, username, displayName } = req.body;
+
+    try {
+        let user = await User.findOne({ telegramId });
+
+        if (!user) {
+            user = new User({ telegramId, username, displayName });
+        } else {
+            user.username = username;
+            user.displayName = displayName;
+        }
+
         await user.save();
+        res.status(200).json({
+            message: 'User authenticated',
+            user,
+            token: generateToken(user._id)
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error authenticating user', error });
     }
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    req.res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
-}));
-
-app.use(passport.initialize());
-
-app.get('/auth/telegram/callback', passport.authenticate('telegram', { session: false }));
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
 });
+
+// Реєстрація нового користувача
+router.post('/register', async (req, res) => {
+    const { username, email, password } = req.body;
+    try {
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
+        const newUser = new User({ username, email, password });
+        await newUser.save();
+        res.status(201).json({
+            _id: newUser._id,
+            username: newUser.username,
+            email: newUser.email,
+            token: generateToken(newUser._id),
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Вхід користувача
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const user = await User.findOne({ username });
+        if (user && (await user.matchPassword(password))) {
+            res.json({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                token: generateToken(user._id),
+            });
+        } else {
+            res.status(400).json({ error: 'Invalid credentials' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+module.exports = router;

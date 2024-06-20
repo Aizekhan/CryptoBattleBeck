@@ -1,45 +1,68 @@
-// backend/controllers/userController.js
-
 const crypto = require('crypto');
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 const generateReferralCode = () => {
     return crypto.randomBytes(4).toString('hex');
 };
 
-// Реєстрація користувача
-router.post('/register', async (req, res) => {
-    const { username, password, email, referralCode } = req.body;
+const generateToken = (id) => {
+    return jwt.sign({ id }, config.jwtSecret, {
+        expiresIn: '30d',
+    });
+};
+
+// Обробка аутентифікації через Telegram
+exports.telegramAuth = async (req, res) => {
+    const { telegramId, username, displayName } = req.body;
+
     try {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ error: 'User already exists' });
+        let user = await User.findOne({ telegramId });
+
+        if (!user) {
+            user = new User({ 
+                telegramId, 
+                username, 
+                displayName,
+                referralCode: generateReferralCode() 
+            });
+        } else {
+            user.username = username;
+            user.displayName = displayName;
         }
 
-        const newUser = new User({ 
-            username, 
-            password, 
-            email,
-            referralCode: generateReferralCode()
+        await user.save();
+        res.status(200).json({
+            message: 'User authenticated',
+            user,
+            token: generateToken(user._id)
         });
-
-        if (referralCode) {
-            const referrer = await User.findOne({ referralCode });
-            if (referrer) {
-                newUser.referredBy = referrer._id;
-                referrer.referrals.push(newUser._id);
-                await referrer.save();
-            }
-        }
-
-        await newUser.save();
-        res.status(201).json({
-            _id: newUser._id,
-            username: newUser.username,
-            email: newUser.email,
-            token: generateToken(newUser._id),
-            referralCode: newUser.referralCode
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    } catch (error) {
+        res.status(500).json({ message: 'Error authenticating user', error });
     }
-});
+};
+
+// Створення реферального коду
+exports.createReferral = async (req, res) => {
+    const { telegramId, username } = req.body;
+
+    try {
+        let user = await User.findOne({ telegramId });
+
+        if (!user) {
+            user = new User({
+                telegramId,
+                username,
+                referralCode: generateReferralCode()
+            });
+            await user.save();
+        }
+
+        res.status(200).json({
+            referralCode: user.referralCode
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating referral code', error });
+    }
+};
