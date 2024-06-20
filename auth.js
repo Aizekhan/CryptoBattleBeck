@@ -14,24 +14,30 @@ const generateToken = (id) => {
 // Обробка аутентифікації через Telegram
 router.post('/telegram', async (req, res) => {
     const { telegramId, username, displayName } = req.body;
+    console.log('Received authentication request:', req.body); // Логування запиту
 
     try {
         let user = await User.findOne({ telegramId });
 
         if (!user) {
             user = new User({ telegramId, username, displayName });
+            console.log('Created new user:', user); // Логування нового користувача
         } else {
             user.username = username;
             user.displayName = displayName;
+            console.log('Updated existing user:', user); // Логування оновленого користувача
         }
 
         await user.save();
+        const token = generateToken(user._id);
+        console.log('Generated token:', token); // Логування згенерованого токену
         res.status(200).json({
             message: 'User authenticated',
             user,
-            token: generateToken(user._id)
+            token
         });
     } catch (error) {
+        console.error('Error authenticating user:', error); // Логування помилок
         res.status(500).json({ message: 'Error authenticating user', error });
     }
 });
@@ -45,6 +51,7 @@ router.get('/:telegramId', async (req, res) => {
         }
         res.json(user);
     } catch (error) {
+        console.error('Error fetching user data:', error); // Логування помилок
         res.status(500).json({ message: 'Error fetching user data', error });
     }
 });
