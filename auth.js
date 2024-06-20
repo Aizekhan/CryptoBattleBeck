@@ -35,7 +35,7 @@ router.post('/telegram', async (req, res) => {
     }
 });
 
-// Реєстрація нового користувача
+// Реєстрація Юзера
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     try {
