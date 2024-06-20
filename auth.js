@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const protect = require('../middleware/authMiddleware');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, config.jwtSecret, {
@@ -35,44 +36,16 @@ router.post('/telegram', async (req, res) => {
     }
 });
 
-// Реєстрація Юзера
-router.post('/register', async (req, res) => {
-    const { username, email, password } = req.body;
+// Отримання даних користувача
+router.get('/:telegramId', async (req, res) => {
     try {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ error: 'User already exists' });
+        const user = await User.findOne({ telegramId: req.params.telegramId }).populate('heroes currentHero mines');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        const newUser = new User({ username, email, password });
-        await newUser.save();
-        res.status(201).json({
-            _id: newUser._id,
-            username: newUser.username,
-            email: newUser.email,
-            token: generateToken(newUser._id),
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Вхід користувача
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const user = await User.findOne({ username });
-        if (user && (await user.matchPassword(password))) {
-            res.json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                token: generateToken(user._id),
-            });
-        } else {
-            res.status(400).json({ error: 'Invalid credentials' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user data', error });
     }
 });
 
