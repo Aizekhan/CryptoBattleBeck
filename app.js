@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 app.use("/api/auth", authRouter);
 
 // Get User Info
-app.use("/api/user", )
+app.use("/api/user", userRouter);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
