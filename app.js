@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 // Add CORS
-app.options("*", cors());
+app.use(cors());
 
 // Middleware
 app.use(express.json());
