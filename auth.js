@@ -18,9 +18,10 @@ router.post('/telegram', async (req, res) => {
 
     try {
         let user = await User.findOne({ telegramId });
+        const referralCode = generateReferralCode();
 
         if (!user) {
-            user = new User({ telegramId, username, displayName });
+            user = new User({ telegramId, username, displayName, referralCode });
             console.log('Created new user:', user); // Логування нового користувача
         } else {
             user.username = username;
@@ -55,5 +56,11 @@ router.get('/:telegramId', async (req, res) => {
         res.status(500).json({ message: 'Error fetching user data', error });
     }
 });
+
+const generateReferralCode = () => {
+    return crypto.randomBytes(4).toString('hex');
+};
+
+
 
 module.exports = router;
