@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('./config');
 const protect = require('./middleware/authMiddleware');
 const crypto = require('crypto');
+const BasicUser = require('./constants/basicuser');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, config.jwtSecret, {
@@ -22,7 +23,7 @@ router.post('/telegram', async (req, res) => {
         const referralCode = generateReferralCode();
 
         if (!user) {
-            user = new User({ telegramId, username, displayName, referralCode });
+            user = new User({ telegramId, username, displayName, referralCode, tapIncome: BasicUser.tapIncome,  hourlyIncome: BasicUser.hourlyIncome, level: BasicUser.level, balance: BasicUser.balance});
             console.log('Created new user:', user); // Логування нового користувача
         } else {
             user.username = username;
