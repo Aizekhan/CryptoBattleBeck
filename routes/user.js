@@ -134,7 +134,7 @@ router.get(`/:userId`, protect, async (req, res) => {
             user
         });
     } else {
-        res.status(404).json({ message: 'User not found' });
+        res.status(404).json({ message: `User not found with Id: ${userId}` });
     }
 });
 
