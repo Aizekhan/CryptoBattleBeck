@@ -125,14 +125,12 @@ router.post('/login', async (req, res) => {
 });
 
 // Отримання профілю користувача
-router.get('/profile', protect, async (req, res) => {
-    const user = await User.findById(req.user._id);
+router.get(`/${userId}`, protect, async (req, res) => {
+    const user = await User.findById(userId);
 
     if (user) {
         res.json({
-            _id: user._id,
-            username: user.username,
-            email: user.email,
+            user
         });
     } else {
         res.status(404).json({ message: 'User not found' });

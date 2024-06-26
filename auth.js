@@ -23,7 +23,7 @@ router.post('/telegram', async (req, res) => {
         const referralCode = generateReferralCode();
 
         if (!user) {
-            user = new User({ telegramId, username, displayName, referralCode, tapIncome: BasicUser.tapIncome,  hourlyIncome: BasicUser.hourlyIncome, level: BasicUser.level, balance: BasicUser.balance});
+            user = new User({ telegramId, username, displayName, referralCode});
             console.log('Created new user:', user); // Логування нового користувача
         } else {
             user.username = username;
