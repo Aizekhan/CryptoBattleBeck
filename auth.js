@@ -4,6 +4,7 @@ const User = require('./models/User');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
 const protect = require('./middleware/authMiddleware');
+const crypto = require('crypto');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, config.jwtSecret, {
