@@ -126,6 +126,7 @@ router.post('/login', async (req, res) => {
 
 // Отримання профілю користувача
 router.get(`/{userId}`, protect, async (req, res) => {
+    console.log("Getting user by id", userId);
     const user = await User.findById(userId);
 
     if (user) {
