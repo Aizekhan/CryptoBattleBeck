@@ -46,6 +46,19 @@ router.post('/telegram', async (req, res) => {
     }
 });
 
+// Отримання профілю користувача
+router.get(`/:userId`, protect, async (req, res) => {
+    console.log("Getting user by id", userId);
+    const user = await User.findById(userId);
+    if (user) {
+        res.json({
+            user
+        });
+    } else {
+        res.status(404).json({ message: `User not found with Id: ${userId}` });
+    }
+});
+
 // Отримання даних користувача
 router.get('/:telegramId', async (req, res) => {
     try {
@@ -121,22 +134,6 @@ router.post('/login', async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
-    }
-});
-
-// Отримання профілю користувача
-router.get(`/:userId`, protect, async (req, res) => {
-    res.status(200);
-    return;
-    console.log("Getting user by id", userId);
-    const user = await User.findById(userId);
-
-    if (user) {
-        res.json({
-            user
-        });
-    } else {
-        res.status(404).json({ message: `User not found with Id: ${userId}` });
     }
 });
 
