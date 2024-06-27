@@ -9,14 +9,15 @@ dotenv.config();
 
 const app = express();
 
-// Use the CORS middleware with specific options
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "cryptobattle.netlify.app"); 
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    next();
-  });
-
-  app.use(cors());
+const corsOptions = {
+    origin: '*',
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept-Type, Authorization',
+  };
+  
+  app.use(cors(corsOptions));
+  
+  app.options('*', cors(corsOptions)); // Preflight requests
 
 // Middleware
 app.use(express.json());
