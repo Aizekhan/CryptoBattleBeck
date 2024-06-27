@@ -47,8 +47,8 @@ router.post('/telegram', async (req, res) => {
 });
 
 // Отримання профілю користувача
-router.get(`/:userId`, protect, async (req, res) => {
-    console.log("Getting user by id", userId);
+router.get('/:userId', protect, async (req, res) => {
+    const userId = req.params.userId;
     const user = await User.findById(userId);
     if (user) {
         res.json({
