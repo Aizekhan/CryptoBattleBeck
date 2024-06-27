@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRouter = require('./auth');
-const userRouter = require('./routes/user');
+// const userRouter = require('./routes/user');
 const cors = require('cors');
 
 dotenv.config();
@@ -30,8 +30,8 @@ app.get('/', (req, res) => {
 // Auth Router
 app.use("/api/auth", authRouter);
 
-// Get User Info
-app.use("/api/user", userRouter);
+// // Get User Info
+// app.use("/api/user", userRouter);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
