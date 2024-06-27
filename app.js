@@ -15,9 +15,9 @@ const corsOptions = {
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept-Type, Authorization',
   };
   
-  app.use(cors(corsOptions));
+app.use(cors(corsOptions));
   
-  app.options('*', cors(corsOptions)); // Preflight requests
+app.options('*', cors(corsOptions)); // Preflight requests
 
 // Middleware
 app.use(express.json());
