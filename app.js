@@ -3,11 +3,22 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRouter = require('./auth');
 const userRouter = require('./routes/user');
-// const cors = require('cors');
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
+
+// Add auto CORS
+const corsOptions = {
+    origin: '*', // Або вкажіть конкретні домени
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  };
+  
+  app.use(cors(corsOptions));
 
 // Add CORS
 app.use((req, res, next) => {
