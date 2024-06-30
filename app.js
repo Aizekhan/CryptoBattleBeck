@@ -22,7 +22,7 @@ app.use(function(req, res, next) {
 });
 
 // Middleware
-// app.use(express.json());
+app.use(express.json());
 
 // Basic route
 app.get('/', (req, res) => {
