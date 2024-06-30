@@ -15,8 +15,8 @@ const generateToken = (id) => {
 
 // Обробка аутентифікації через Telegram
 router.post('/telegram', async (req, res) => {
-    const { telegramId, username, displayName } = req.body;
     console.log('Received authentication request:', req.body); // Логування запиту
+    const { telegramId, username, displayName } = req.body;
 
     try {
         let user = await User.findOne({ telegramId });
