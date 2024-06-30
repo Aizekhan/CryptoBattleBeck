@@ -16,21 +16,9 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
     optionsSuccessStatus: 204
-  };
-  
-  app.use(cors(corsOptions));
+};
 
-// Add CORS
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-  });
-  
-app.options('*', (req, res) => {
-    res.sendStatus(204);
-  });
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
