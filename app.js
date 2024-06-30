@@ -34,6 +34,14 @@ app.use("/api/auth", authRouter);
 // Get User Info
 app.use("/api/user", userRouter);
 
+// Handle OPTIONS requests
+app.options('', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.sendStatus(204);
+});
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
