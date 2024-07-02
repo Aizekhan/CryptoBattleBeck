@@ -51,6 +51,7 @@ router.get('/:userId', protect, async (req, res) => {
     const userId = req.params.userId;
     const user = await User.findById(userId);
     if (user) {
+        res.header('Access-Control-Allow-Origin', '*');
         res.json({
             user
         });
