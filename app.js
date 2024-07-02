@@ -13,7 +13,7 @@ const app = express();
 const corsOptions = {
     origin: '*', // Або вкажіть конкретні домени
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Referer', 'Accept', 'X-Requested-With', 'Origin'],
     preflightContinue: false,
     optionsSuccessStatus: 204
 };
@@ -38,7 +38,7 @@ app.use("/api/user", userRouter);
 app.options('', (req, res) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization', 'Referer', 'Accept', 'X-Requested-With', 'Origin');
     res.sendStatus(204);
 });
 
