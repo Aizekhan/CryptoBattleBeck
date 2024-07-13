@@ -1,3 +1,4 @@
+// routes/userProgress.js
 const express = require('express');
 const router = express.Router();
 const UserProgress = require('../models/UserProgress');

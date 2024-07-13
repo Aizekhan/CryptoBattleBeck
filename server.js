@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -8,7 +9,7 @@ const jwt = require('jsonwebtoken');
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(bodyParser.json());
