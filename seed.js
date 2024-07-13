@@ -63,7 +63,6 @@ const seedDatabase = async () => {
                         legendaryItemChance: 0.6,
                         uniqueItemChance: 0.2
                     },
-                    img: 'path/to/hero1/image',
                     passiveSkills: [
                         { id: 1, level: 0 },
                         { id: 2, level: 0 }
